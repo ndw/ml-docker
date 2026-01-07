@@ -9,9 +9,11 @@ ROOT=${ROOT:-$(readlink -e $(dirname $0))}
 
 echo "Starting up hosts"
 for host ; do
-  $ROOT/run-runner "$host" "$network" 
+  $ROOT/run-runner "$network" "$host" 
 done
 
+echo Sleeping...
+sleep 10
 echo "Joining cluster"
 python3.4 $ROOT/make-cluster.py --credentials admin:admin --host $*
 

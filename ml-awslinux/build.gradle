@@ -13,21 +13,23 @@ buildDockerfile {
   // Use a single RUN command for multiple commands to limit image sizes
   runCommand { [ 
       'yum makecache fast',
-      'yum -y install deltarpm',
-      'yum -y install python-setuptools lsb initscripts sudo python34 systemd',
-      'curl https://bootstrap.pypa.io/get-pip.py | python3.4',
-      "yum -y install systemd",
-      'yum -y update' , 
-      'yum clean packages'
-    ].join(' &&\\\n  ') }
+      'yum -y update',
+      'yum -y install deltarpm python34',
+      'curl https://bootstrap.pypa.io/get-pip.py | python3',
+  // MarkLogic.rpm dependencies installed to make ml-runner a  smaller delta
+     'yum -y install lsb-core-amd64 gdb glibc libgcc48 libstdc++'
+      ].join(' &&\\\n ') }
 
   // Last 2 are for the python API
   // if you don't need or want the Python tools', 
   runCommand  { [ 
-      '/usr/bin/pip3 install --upgrade pip ',
-      '/usr/bin/pip3 install requests requests-toolbelt ',
-      '/usr/bin/pip3 install marklogic_python_api -i https://testpypi.python.org/pypi' ,
-      '(rm -rf /tmp/* 2>/dev/null|| true)' ].join(' &&\\\n ') }
+      'pip3 install --upgrade pip ',
+      'pip3 install requests requests-toolbelt ',
+      'pip3 install marklogic_python_api -i https://testpypi.python.org/pypi' ,
+      'yum -y update' , 
+      'yum clean packages',
+      '(rm -rf /tmp/* 2>/dev/null|| true)' 
+     ].join(' &&\\\n ') }
 
   defaultCommand  "/bin/bash"
 }
